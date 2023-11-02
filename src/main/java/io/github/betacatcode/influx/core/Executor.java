@@ -26,9 +26,9 @@ public class Executor {
         this.influxDBMapper = influxDBMapper;
     }
 
-    public <E> List<E> select(String sql, Class domainClass) {
+    public <E> List<E> select(String sql, Class<E> domainClass) {
         // 获取数据库名
-        Measurement measurement = domainClass.getClass().getAnnotation(Measurement.class);
+        Measurement measurement = domainClass.getAnnotation(Measurement.class);
         String database = measurement.database();
         influxDB.setDatabase(database);
         if ("[unassigned]".equals(database)) {
