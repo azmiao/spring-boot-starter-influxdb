@@ -1,20 +1,23 @@
-# spring-boot-starter-influxdb
+# spring-boot-starter-influxdb-fork
 
 ## 简介
 
-这是一个InfluxDB的框架，使用方式类似于Mybatis，对influxDB官方工具进行了简易封装，支持使用注解的方式对InfluxDB进行增、删、查操作，需配合Spring Boot使用。
+这是原版[spring-boot-starter-influxdb](https://github.com/betacatcode/spring-boot-starter-influxdb)的修改版本
+
+需要和influxDB官方依赖配合使用
+
+修改内容：
+- `@Select`注解会自动使用返回类型的数据库进行查询
 
 ## 使用方法
 
-1.  POM文件添加依赖
+1.  下载[releases](https://github.com/azmiao/spring-boot-starter-influxdb/releases)下的依赖，并自己导入项目，比如gradle的:
 
-   ~~~xml
-   <dependency>
-       <groupId>io.github.betacatcode</groupId>
-       <artifactId>spring-boot-starter-influxdb</artifactId>
-       <version>0.0.2-RELEASE</version>
-   </dependency>
-   ~~~
+~~~
+implementation fileTree(dir: 'libs', includes: ['*.jar'])
+~~~
+
+注意：下方的和原版使用方式一致[spring-boot-starter-influxdb](https://github.com/betacatcode/spring-boot-starter-influxdb)
 
 2. 配置yml文件
 
