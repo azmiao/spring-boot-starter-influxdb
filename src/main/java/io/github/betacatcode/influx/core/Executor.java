@@ -5,6 +5,7 @@ import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBMapper;
 
 import java.util.ArrayList;
@@ -26,8 +27,16 @@ public class Executor {
     }
 
     public <E> List<E> select(String sql, Class domainClass) {
-        List<E> results = influxDBMapper.query(new Query(sql), domainClass);
-        return results;
+        // 获取数据库名
+        Measurement measurement = domainClass.getClass().getAnnotation(Measurement.class);
+        String database = measurement.database();
+        influxDB.setDatabase(database);
+        if ("[unassigned]".equals(database)) {
+            throw new IllegalArgumentException(Measurement.class.getSimpleName() + " of class " + domainClass.getName() + " should specify a database value for this operation");
+        }
+        // 指定数据库名后再查询
+        QueryResult queryResult = this.influxDB.query(new Query(sql));
+        return this.influxDBMapper.toPOJO(queryResult, domainClass);
     }
 
     public void insert(Object args[]) {
