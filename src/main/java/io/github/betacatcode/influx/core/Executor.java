@@ -1,3 +1,8 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package io.github.betacatcode.influx.core;
 
 import org.influxdb.InfluxDB;
@@ -7,14 +12,18 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 执行器
- */
 public class Executor {
+
+    // 数据库名称
+    @Value("${spring.influx.database}")
+    private String dbName;
+
     InfluxDB influxDB;
     InfluxDBMapper influxDBMapper;
 
@@ -27,14 +36,18 @@ public class Executor {
     }
 
     public <E> List<E> select(String sql, Class<E> domainClass) {
-        // 获取数据库名
-        Measurement measurement = domainClass.getAnnotation(Measurement.class);
+        Measurement measurement = (Measurement)domainClass.getAnnotation(Measurement.class);
+        // 数据库
         String database = measurement.database();
-        influxDB.setDatabase(database);
-        if ("[unassigned]".equals(database)) {
+        if ("[unassigned]".equals(database) && !StringUtils.isEmpty(dbName)) {
+            database = dbName;
+        } else if ("[unassigned]".equals(database)) {
             throw new IllegalArgumentException(Measurement.class.getSimpleName() + " of class " + domainClass.getName() + " should specify a database value for this operation");
         }
-        // 指定数据库名后再查询
+        this.influxDB.setDatabase(database);
+        // 保留策略
+        String retentionPolicy = measurement.retentionPolicy();
+        this.influxDB.setRetentionPolicy(retentionPolicy);
         QueryResult queryResult = this.influxDB.query(new Query(sql));
         return this.influxDBMapper.toPOJO(queryResult, domainClass);
     }

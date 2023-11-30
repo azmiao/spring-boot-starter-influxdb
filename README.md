@@ -8,6 +8,7 @@
 
 修改内容：
 - `@Select`注解会自动使用返回类型的数据库进行查询
+- 添加默认的数据库查询配置支持
 
 ## 使用方法
 
@@ -26,11 +27,14 @@ spring:
   influx:
     url: http://127.0.0.1:8086
     password: 123456
+    dbName: db_test
     user: admin
     mapper-location: com.github.betacatcode
 ~~~
 
 **其中 mapper-location 是InfluxDB Mapper存放路径** 
+
+**其中 dbName 你需要的默认数据库名，在使用注解@Measurement()将默认使用配置的dbName** 
 
 3. 建立代理mapper的配置类，否则可能会出现注入优先级引起的问题
 ~~~
