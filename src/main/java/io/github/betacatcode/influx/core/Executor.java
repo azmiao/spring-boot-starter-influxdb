@@ -35,19 +35,28 @@ public class Executor {
         this.influxDBMapper = influxDBMapper;
     }
 
-    public <E> List<E> select(String sql, Class<E> domainClass) {
-        Measurement measurement = (Measurement)domainClass.getAnnotation(Measurement.class);
+    /**
+     * 设置配置
+     *
+     * @param measurement 注解
+     */
+    private void setInfluxConfig(Measurement measurement) {
         // 数据库
         String database = measurement.database();
         if ("[unassigned]".equals(database) && !StringUtils.isEmpty(dbName)) {
             database = dbName;
         } else if ("[unassigned]".equals(database)) {
-            throw new IllegalArgumentException(Measurement.class.getSimpleName() + " of class " + domainClass.getName() + " should specify a database value for this operation");
+            throw new IllegalArgumentException(Measurement.class.getSimpleName() + " should specify a database value for this operation");
         }
         this.influxDB.setDatabase(database);
         // 保留策略
         String retentionPolicy = measurement.retentionPolicy();
         this.influxDB.setRetentionPolicy(retentionPolicy);
+    }
+
+    public <E> List<E> select(String sql, Class<E> domainClass) {
+        Measurement measurement = (Measurement)domainClass.getAnnotation(Measurement.class);
+        setInfluxConfig(measurement);
         QueryResult queryResult = this.influxDB.query(new Query(sql));
         return this.influxDBMapper.toPOJO(queryResult, domainClass);
     }
@@ -74,13 +83,12 @@ public class Executor {
 
                 //获取数据库名和rp
                 Measurement measurement = firstObj.getClass().getAnnotation(Measurement.class);
-                String database = measurement.database();
                 String retentionPolicy = measurement.retentionPolicy();
                 BatchPoints batchPoints = BatchPoints
                         .builder()
                         .points(pointList)
                         .retentionPolicy(retentionPolicy).build();
-                influxDB.setDatabase(database);
+                setInfluxConfig(measurement);
                 influxDB.write(batchPoints);
             }
 
