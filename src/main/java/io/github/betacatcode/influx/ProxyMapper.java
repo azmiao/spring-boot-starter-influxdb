@@ -1,11 +1,11 @@
 package io.github.betacatcode.influx;
 
-import io.github.betacatcode.influx.ano.Delete;
-import io.github.betacatcode.influx.ano.Insert;
-import io.github.betacatcode.influx.ano.Select;
+import io.github.betacatcode.influx.ano.*;
 import io.github.betacatcode.influx.core.Executor;
 import io.github.betacatcode.influx.core.ParameterHandler;
 import io.github.betacatcode.influx.core.ResultSetHandler;
+import io.github.betacatcode.influx.entity.ParamClass;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -40,6 +40,16 @@ public class ProxyMapper implements InvocationHandler {
                 sql = parameterHandler.handleParameter(parameters, args, sql);
                 //查询结果
                 Class resultType = selectAnnotation.resultType();
+                // 如果设置ParamClass就需要使用参数类型来解析
+                if (ParamClass.class.equals(resultType)) {
+                    for (int i = 0; i < parameters.length; i++) {
+                        ResultClass resultClass = parameters[i].getAnnotation(ResultClass.class);
+                        if (!ObjectUtils.isEmpty(resultClass)) {
+                            resultType = (Class) args[i];
+                            break;
+                        }
+                    }
+                }
                 List<Object> list = executor.select(sql, resultType);
                 //根据返回类型返回结果
                 Class<?> returnType = method.getReturnType();

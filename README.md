@@ -9,6 +9,7 @@
 修改内容：
 - `@Select`注解会自动使用返回类型的数据库进行查询
 - 添加默认的数据库查询配置支持
+- `@Select`注解增加返回值泛型支持，详情看本页最后
 
 ## 使用方法
 
@@ -17,8 +18,6 @@
 ~~~
 implementation fileTree(dir: 'libs', includes: ['*.jar'])
 ~~~
-
-注意：下方的和原版使用方式一致[spring-boot-starter-influxdb](https://github.com/betacatcode/spring-boot-starter-influxdb)
 
 2. 配置yml文件
 
@@ -154,6 +153,17 @@ class InfluxdbAnnotationApplicationTests {
 
 ~~~
 
+
+### `@Select`注解返回值泛型支持
+
+```java
+public interface StudentMapper<T> extends InfluxDBBaseMapper<T> {
+
+    @Select(value = "select * from test.autogen.student where sname=#{sname}",resultType = ParamClass.class)
+    List<T> selectByName(@Param("sname") String sname, @ResultClass Class<T> clazz);
+
+}
+```
 
 
 
