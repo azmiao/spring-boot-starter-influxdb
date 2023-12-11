@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface ResultClass {
 
-    Class<?> clazz();
+    boolean enable() default true;
 
 }
