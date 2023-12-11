@@ -27,13 +27,9 @@ public class ParameterHandler {
                 parameterName = param.value();
             }
 
-            if (parameterType == String.class) {
-                sql = sql.replaceAll("\\#\\{" + parameterName + "\\}", "\"" + args[i] + "\"");
-                sql = sql.replaceAll("\\$\\{" + parameterName + "\\}", args[i].toString());
-            } else {
-                sql = sql.replaceAll("\\#\\{" + parameterName + "\\}", args[i].toString());
-                sql = sql.replaceAll("\\$\\{" + parameterName + "\\}", args[i].toString());
-            }
+            sql = sql.replaceAll("\\#\\{" + parameterName + "\\}", "\"" + args[i] + "\"");
+            sql = sql.replaceAll("\\^\\{" + parameterName + "\\}", "'" + args[i] + "'");
+            sql = sql.replaceAll("\\$\\{" + parameterName + "\\}", args[i].toString());
         }
         return sql;
     }

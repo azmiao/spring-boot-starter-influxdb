@@ -72,6 +72,11 @@ public class Student {
 
 5. 创建实体类对应Mapper，需继承InfluxDBBaseMapper这个接口
 
+> 【注意】：`@Select`中的sql语句：
+- 使用`#{}`会被替代为`"`
+- 使用`^{}`会被替代为`'`
+- 使用`${}`将不会带引号
+
 ~~~java
 public interface StudentMapper extends InfluxDBBaseMapper {
 
