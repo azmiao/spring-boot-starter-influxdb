@@ -6,4 +6,7 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Documented
 public @interface ResultClass {
+
+    Class<?> clazz();
+
 }

@@ -46,7 +46,14 @@ public class ProxyMapperRegister {
                     metadataReader = metadataReaderFactory.getMetadataReader(resource);
                     String className = metadataReader.getClassMetadata().getClassName();
                     Class<?> aClass = Class.forName(className);
-                    classes.add(aClass);
+
+                    //当这个Mapper实现InfluxBaseMapper时加集合
+                    Class<?>[] interfaces = aClass.getInterfaces();
+                    for (Class<?> anInterface : interfaces) {
+                        if (anInterface == InfluxDBBaseMapper.class) {
+                            classes.add(aClass);
+                        }
+                    }
                 }
             }
         } catch (IOException e) {
