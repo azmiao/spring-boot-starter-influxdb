@@ -31,6 +31,8 @@ public class ParameterHandler {
             sql = sql.replaceAll("\\^\\{" + parameterName + "\\}", "'" + args[i] + "'");
             sql = sql.replaceAll("\\$\\{" + parameterName + "\\}", args[i].toString());
         }
+
+        System.out.println("influxDB SQL=" + sql);
         return sql;
     }
 }

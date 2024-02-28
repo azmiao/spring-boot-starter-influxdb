@@ -10,6 +10,7 @@
 - `@Select`注解会自动使用返回类型的数据库进行查询
 - 添加默认的数据库查询配置支持
 - `@Select`注解增加返回值泛型支持，详情看本页最后
+- 可选解析返回实体的表名匹配方式
 
 ## 使用方法
 
@@ -29,11 +30,14 @@ spring:
     dbName: db_test
     user: admin
     mapper-location: com.github.betacatcode
+    measurementMatch: equals
 ~~~
 
 **其中 mapper-location 是InfluxDB Mapper存放路径** 
 
 **其中 dbName 你需要的默认数据库名，在使用注解@Measurement()将默认使用配置的dbName** 
+
+**其中 measurementMatch 解析返回实体的时候表名匹配方式，可选[equals, contains, false]，默认equals；完全匹配，contains：模糊匹配，false：不校验表名** 
 
 3. 建立代理mapper的配置类，否则可能会出现注入优先级引起的问题
 ~~~
